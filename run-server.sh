@@ -27,6 +27,6 @@ then
 fi
 
 already_running
-source venv/bin/activate
+[[ -d venv ]] && source venv/bin/activate
 ./server.py $PORT > $LOG_DIR/server.log 2>&1 &
 
