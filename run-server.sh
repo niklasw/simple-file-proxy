@@ -1,5 +1,7 @@
 #!/usr/bin/sh
 
+cd "${0%/*}"
+
 LOG_DIR="logs"
 PORT=5080
 
