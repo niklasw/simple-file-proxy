@@ -3,7 +3,9 @@
 cd "${0%/*}"
 
 LOG_DIR="logs"
-PORT=5080
+PORT=${1:-5080}
+
+mkdir -p $LOG_DIR
 
 function already_running()
 {
