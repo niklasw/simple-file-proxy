@@ -4,7 +4,8 @@ from pathlib import Path
 import requests
 import uuid
 
-config = {'url': 'http://localhost:5000/transfer'}
+config = {'url': 'http://localhost:5080/rw'}
+
 
 def publish(file_path: Path):
     srv = config['url']
@@ -12,14 +13,16 @@ def publish(file_path: Path):
     file_name = str(uuid.uuid3(uuid.NAMESPACE_URL, str(file_path)))
     url = '/'.join([srv, file_name])
     try:
-        requests.post(url, files=files)
+        #requests.post(url, files=files)
+        with file_path.open('rb') as f:
+            requests.post(url, data=f)
         return url
     except Exception as e:
         print('POST request failed')
         return None
 
 
-def fetch(file_name, save_as = Path('fetched.data')):
+def fetch(file_name, save_as=Path('fetched.data')):
     srv = config['url']
     url = '/'.join([srv, str(file_name)])
     try:
@@ -40,7 +43,7 @@ if __name__ == '__main__':
     except:
         print('Missing arguments: Usage ./client.py <post|get> <file>')
         sys.exit(1)
-    if action in ['post','get']:
+    if action in ['post', 'get']:
         if action == 'post':
             if f.exists():
                 print(publish(f))
