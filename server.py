@@ -72,4 +72,4 @@ if __name__ == '__main__':
     else:
         port = 5000
     log()
-    app.run(debug=True, port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)

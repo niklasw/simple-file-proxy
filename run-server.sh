@@ -3,7 +3,7 @@
 cd "${0%/*}"
 
 LOG_DIR="logs"
-PORT=${1:-5080}
+PORT=${1:-4445}
 
 mkdir -p $LOG_DIR
 
