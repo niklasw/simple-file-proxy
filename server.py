@@ -7,10 +7,11 @@ from pathlib import Path
 import json
 import os
 import sys
+import getpass
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = '/tmp/flask-blob/uploads'
+app.config['UPLOAD_FOLDER'] = f'/tmp/{getpass.getuser()}/uploads'
 Path(app.config['UPLOAD_FOLDER']).mkdir(parents=True, exist_ok=True)
 
 
