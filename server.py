@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+from file_utils import find_openfoam_cases
+
 from flask import Flask, render_template, request,\
-    send_file, send_from_directory, abort
+    send_from_directory, abort
 from werkzeug.utils import secure_filename
 from pathlib import Path
 import json
@@ -18,6 +20,24 @@ Path(app.config['UPLOAD_FOLDER']).mkdir(parents=True, exist_ok=True)
 @app.route('/upload/<path:file_name>')
 def upload(file_name):
     return render_template('upload.html', file_name=secure_filename(file_name))
+
+
+@app.route('/explore/<path:case_path>')
+def explore(case_path):
+    request_path = os.getenv('CFD_HOME')  # request.args.get('path')
+    all_cases = find_openfoam_cases(request_path)
+    response_str = f'Case directories under {request_path} {case_path}'
+    return render_template('explore.html',
+                           header=response_str,
+                           file_info_list=sorted(all_cases,
+                                                 key=lambda t: t['mtime']))
+
+
+@app.route('/casebrowser')
+def browse():
+    request_path = request.args.get('path')
+    all_cases = find_openfoam_cases(request_path)
+    response_str = f'Case directories under {request_path}\n'
 
 
 @app.route('/transfer/<path:file_name>', methods=['GET', 'POST'])
@@ -62,10 +82,11 @@ def log():
     with Path(log_dir, 'PID').open('w') as f:
         f.write(str(os.getpid()))
 
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         try:
-            port=int(sys.argv[1])
+            port = int(sys.argv[1])
         except TypeError as e:
             print('Argument must be a port number')
             print(e)
