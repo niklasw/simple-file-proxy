@@ -35,7 +35,7 @@ def explore():
 
 def safe_path(root: Path, path: Path):
     try:  # Protect against access outside of root
-        (root/path).resolve().relative_to(root)
+        (root / path).resolve().relative_to(root)
         return True
     except Exception:
         return False
@@ -73,7 +73,7 @@ def download(case_path):
     if file_path.is_file():
         return send_from_directory(root_path, case_path)
     elif file_path.is_dir():
-        target_file = app.config['UPLOAD_FOLDER']/'case.zip'
+        target_file = app.config['UPLOAD_FOLDER'] / 'case.zip'
         if zip_directory(file_path, target_file):
             return send_from_directory(app.config['UPLOAD_FOLDER'], dl_name)
     return abort(404)
@@ -116,8 +116,8 @@ def file_transfer_test(file_name):
 
 
 def log():
-    log_dir = Path(Path.cwd(), 'logs')
-    if not log_dir.exists():
+    log_dir = Path(Path(os.getenv('CFD_HOME'), 'logs'))
+    if not log_dir.exists(parents=True, exist_ok=True):
         log_dir.mkdir()
     with Path(log_dir, 'PID').open('w') as f:
         f.write(str(os.getpid()))
