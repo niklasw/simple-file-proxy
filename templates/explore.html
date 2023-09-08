@@ -10,8 +10,7 @@
        {% if parent %}
        <tr>
            <td class="directory">
-               <!--<a href="/explore/{{parent}}">-->
-               <a href="/explore/">
+	       <a href="{{ url_for('explore') }}">
                    ..
                </a>
            </td><td /> <td />
@@ -23,20 +22,20 @@
           <td class="file"> {{item.name}} </td>
           <td> {{ item.size }} </td>
           <td> {{ item.time_str }} </td>
-          <td> <a href="/explore/{{item.path}}">view</a></td>
+	  <td> <a href="{{ url_for('explorer', case_path=item.path) }}">view</a></td>
        </tr>
        {% endfor %}
 
        {% for item in dir_info_list %}
        <tr>
           <td class="directory">
-              <a href="/explore/{{item.path}}">
+		  <a href="{{ url_for('explorer', case_path=item.path) }}">
                   {{item.name}}/
               </a>
           </td>
           <td> {{ item.size }} MB </td>
           <td> {{ item.time_str }} </td>
-          <td> <a class="download" href="/download/{{item.path}}?dl={{item.name}}"
+	  <td> <a class="download" href="{{ url_for('download', case_path=item.path) }}?dl={{ item.name }}.zip"
                   download="{{item.name}}.zip">download</a></td>
        </tr>
        {% endfor %}
