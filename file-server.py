@@ -11,6 +11,7 @@ import json
 import os
 import sys
 import getpass
+from random import randint
 
 
 app = Flask(__name__)
@@ -125,7 +126,8 @@ def file_transfer_test(file_name):
 
 
 def log():
-    log_dir = Path(Path.cwd(), 'logs')
+    log_dir = Path(f'/tmp/file-server-{randint(0,1e6)}')
+    print(log_dir)
     if not log_dir.exists():
         log_dir.mkdir()
     with Path(log_dir, 'PID').open('w') as f:
