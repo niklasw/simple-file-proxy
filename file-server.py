@@ -15,7 +15,9 @@ from random import randint
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = Path(f'/tmp/{getpass.getuser()}/uploads')
+uploads = os.getenv('UPLOAD_FOLDER') or f'/tmp/{getpass.getuser()}/uploads'
+
+app.config['UPLOAD_FOLDER'] = Path(uploads)
 app.config['UPLOAD_FOLDER'].mkdir(parents=True, exist_ok=True)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
 
