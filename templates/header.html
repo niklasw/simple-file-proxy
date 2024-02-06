@@ -13,12 +13,12 @@
     -->
 
     <link rel="stylesheet" href="{{ url_for('static', filename='modal.css') }}">
-    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/modal.js') }}"></script> -->
 </head>
 <body>
+    <!-- Modal Popup Dialog (testing)
     <button id="openModalButton">Open Modal</button>
 
-    <!-- Modal Popup Dialog -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <button class="close">close</button>
@@ -38,9 +38,11 @@
             document.getElementById("myModal").style.display = "none";
         };
     </script>
+    -->
 
+  <p style="float: left;">Server address: {{ request.host }}</p>
   <div id="content">
-    <p style="float: right;">Server address: {{ request.host }}</p>
+    <p style="float: right;"><a href="javascript:history.back()">Go Back</a></p>
 {% block content %} {% endblock %}
   </div>
 </body>

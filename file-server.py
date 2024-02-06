@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from file_utils import find_openfoam_cases, list_directory, zip_directory
+from file_utils import find_openfoam_cases, zip_directory
+from file_utils import list_directory, list_directory_as_dicts
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask, render_template, request,\
-    send_from_directory, abort
+    send_from_directory, abort, jsonify
 from werkzeug.utils import secure_filename
 from pathlib import Path
 import json
@@ -15,7 +16,7 @@ from random import randint
 
 
 app = Flask(__name__)
-uploads = os.getenv('UPLOAD_FOLDER') or f'/tmp/{getpass.getuser()}/uploads'
+uploads = os.getenv('UPLOAD_FOLDER') or f'/tmp/uploads'
 
 app.config['UPLOAD_FOLDER'] = Path(uploads)
 app.config['UPLOAD_FOLDER'].mkdir(parents=True, exist_ok=True)
@@ -125,6 +126,16 @@ def file_transfer_test(file_name):
             return json.dumps({'exit': 404,
                                'message': 'File not found on server.'})
     return request.headers.__repr__()
+
+
+@app.route('/api/ls/')
+def ls_uploads():
+    target_folder = app.config['UPLOAD_FOLDER']
+    if target_folder.is_dir():
+        content = list_directory_as_dicts(target_folder, Path('.'))
+        content.sort(key=lambda t: t.get('mtime'), reverse=True)
+        return jsonify(content)
+    return jsonify()
 
 
 def log():

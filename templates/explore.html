@@ -20,9 +20,14 @@
        {% for item in file_info_list %}
        <tr>
           <td class="file"> {{item.name}} </td>
-          <td> {{ item.size }} </td>
-          <td> {{ item.time_str }} </td>
-	  <td> <a href="{{ url_for('explorer', case_path=item.path) }}">view</a></td>
+          <td> {{ item.file_size }} </td>
+          <td> {{ item.mtime_str() }} </td>
+	      <td>{% if item.file_type == '.zip' %}
+                <a class="download" href="{{ url_for('download', case_path=item.path) }}?dl={{ item.name }}.zip" download="{{item.name}}.zip">download</a>
+              {% else %}
+                <a href="{{ url_for('explorer', case_path=item.path) }}">view</a>
+              {% endif %}
+          </td>
        </tr>
        {% endfor %}
 
@@ -33,8 +38,8 @@
                   {{item.name}}/
               </a>
           </td>
-          <td> {{ item.size }} MB </td>
-          <td> {{ item.time_str }} </td>
+          <td> {{ item.file_size }} MB </td>
+          <td> {{ item.mtime_str() }} </td>
 	  <td> <a class="download" href="{{ url_for('download', case_path=item.path) }}?dl={{ item.name }}.zip"
                   download="{{item.name}}.zip">download</a></td>
        </tr>

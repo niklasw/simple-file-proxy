@@ -19,15 +19,19 @@ tfmt = '%Y-%m-%d %H:%M:%S'
 class file_info:
     name: str
     path: Path
-    size: int
+    file_size: int
     mtime: int
-    time_str: str
+    last_modified: datetime
+    file_type: str
 
     def asdict(self):
         return asdict(self)
 
     def asjson(self):
         return json.dumps(self.asdict(), indent=4, default=str)
+
+    def mtime_str(self):
+        return self.last_modified.strftime(tfmt)
 
     def __repr__(self):
         return self.asjson()
@@ -55,20 +59,32 @@ def list_directory(root: Path, path: Path) -> dict:
     return content
 
 
+def list_directory_as_dicts(root: Path, path: Path) -> dict:
+    content = list_directory(root, path)
+    dictified = [v.asdict() for v in content['dirs']]
+    dictified+= [v.asdict() for v in content['files']]
+    asjson = json.dumps(dictified, default=str)
+    dictified = json.loads(asjson)
+    return dictified
+
+
 def f_stat(root: Path, path: Path) -> dict:
     abs_path = Path(root, path)
     mtime = abs_path.stat().st_mtime
     if abs_path.is_dir():
         size = get_dir_size(abs_path)
+        file_type = 'directory'
     elif abs_path.is_file():
         size = abs_path.stat().st_size
+        file_type = path.suffix
     else:
         return None
     f_info = file_info(path=path,
                        name=abs_path.name,
                        mtime=mtime,
-                       time_str=datetime.fromtimestamp(mtime).strftime(tfmt),
-                       size=int(size))
+                       last_modified=datetime.fromtimestamp(mtime),
+                       file_size=int(size),
+                       file_type=file_type)
     return f_info
 
 
@@ -106,8 +122,12 @@ def generate_zip(files: list, zip_file: str, compress=False):
 
 
 if __name__ == '__main__':
-    root = '/home/cfd/cfd_run'
+    import sys
+    root = sys.argv[1]
     cases = find_openfoam_cases(root)
     for cas in cases:
         print(cas)
         print(cas.path)
+
+    contents = list_directory_as_dicts(root,'')
+    print(json.dumps(contents, default=str, indent=2))
